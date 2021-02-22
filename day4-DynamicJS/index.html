@@ -1,0 +1,104 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+
+  <title>TodoMVC</title>
+
+  <link rel="stylesheet" href="todolist.css">
+  <script src="todo.js" type="text/javascript"></script>
+</head>
+
+
+<body>
+
+  <section class="todoapp">
+
+    <header class="header">
+      <h1>todos</h1>
+      <input class="new-todo" placeholder="What needs to be done?" id="todoInput" autofocus>
+    </header>
+
+    <section class="main">
+      <input class="toggle-all" type="checkbox" id="toggleCheckbox">
+      <ul class="todo-list" id="ulTodo">
+      <li>
+        <div class="view">
+          <input class="toggle" type="checkbox">
+          <label>My task </label>
+          <button class="destroy" >
+        </div>
+        <input class="edit">
+
+      </li>
+      </ul>
+    </section>
+
+    <footer class="footer">
+      <span class="todo-count"><strong>0</strong> items left</span>
+      <button class="clear-completed">Clear completed
+      </button>
+    </footer>
+
+  </section>
+
+</body>
+
+<script>
+  const todoApp = new Todolist();
+
+  fetch('https://jsonplaceholder.typicode.com/todos')
+    .then((response) => response.json())
+    .then(jsonResponse => {
+      jsonResponse.forEach(todo => todoApp.addTodo(new Todo(todo.title)));
+    });
+
+  const ulTodo = document.getElementById("ulTodo");
+  const todoInput = document.getElementById("todoInput");
+  const toggleCheckbox = document.getElementById("toggleCheckbox");
+
+  todoInput.addEventListener("keydown", ev => {
+    if (ev.keyCode == 13 && ev.currentTarget.value !== "") {//Enter
+      todoApp.addTodo(new Todo(ev.currentTarget.value));
+      ev.currentTarget.value = "";
+    }
+  });
+
+
+  todoApp.todoChangedEvent.addEventListener(todoApp.todoChangedEventName, ev => {
+    if (ev.todo === "undefined" || ev.action == "undefined") return;
+    switch (ev.action) {
+      case todoApp.todoOperations.itemAdded:
+        {
+          const li = document.createElement("li");
+          li.id = "li#_" + ev.todo.id;
+          li.innerHTML = `
+          <div class="view">
+            <input class="toggle" type="checkbox">
+            <label>${ev.todo.title}</label>
+            <button class="destroy" onclick="todoApp.removeTodo(${ev.todo.id})">
+          </div>
+          <input class="edit">
+          `;
+          li.id = "li#_" + ev.todo.id;
+          ulTodo.appendChild(li);
+          break;
+        }
+      case todoApp.todoOperations.itemRemoved:
+        {
+          const li = document.getElementById("li#_" + ev.todo.id);
+          if (li === "undefined") return;
+          ulTodo.removeChild(li);
+          break;
+        }
+    }
+
+  });
+
+
+
+
+</script>
+
+</html>
