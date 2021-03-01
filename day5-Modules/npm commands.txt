@@ -1,0 +1,5 @@
+npx create-react-app todolist  //create react application
+npm start //start the app
+npm i //installs all the node modules
+npm build //deploy and optimise. automatically genreate mapping javascript mapping
+
